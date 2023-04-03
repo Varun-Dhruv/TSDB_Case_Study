@@ -1,0 +1,101 @@
+---
+version: '3.9'
+
+volumes:
+  influxdb_data:
+    name: influxdb_data
+  timescaledb_data:
+    name: timescaledb_data
+  dolphindb_data:
+    name: dolphindb_data
+  prometheus_data:
+    name: prometheus_data
+  druiddb_data:
+    name: druid_data
+
+services:
+  influxdb:
+    image: influxdb:1.8.3
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    env_file:
+      - .env
+    networks:
+      - databases
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/ping"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+        - tsdb
+  timescaledb:
+      image: timescale/timescaledb:2.0.0-pg12
+      container_name: timescaledb
+      restart: always
+      ports:
+        - 5432:5432
+      volumes:
+        - timescaledb_data:/var/lib/postgresql/data
+      env_file:
+        - .env
+      networks:
+        - databases
+      healthcheck:
+          test: ["CMD", "pg_isready", "-U", "postgres"]
+          interval: 1m
+          timeout: 10s
+          retries: 3
+          start_period: 30s
+      profiles:
+          - tsdb
+  dolphindb:
+    image: dolphindb/dolphindb:3.0.0
+    container_name: dolphindb
+    restart: always
+    ports:
+      - 8848:8848
+    volumes:
+      - dolphindb_data:/opt/dolphindb/data
+    env_file:
+      - .env
+    networks:
+      - databases
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8848"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+      - tsdb
+  druid: 
+    image: apache/druid:0.20.0
+    container_name: druid
+    restart: always
+    ports:
+      - 8082:8082
+    volumes:
+      - druid_data:/opt/druid/var
+    env_file:
+      - .env
+    networks:
+      - databases
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+      - tsdb
+networks:
+  databases:
+    name: databases
+    driver: bridge
+      
