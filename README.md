@@ -12,9 +12,15 @@ In summary, time series databases are an important tool for managing and analyzi
 ### Classic TimeSeries Databases
  - InfluxDB
  - TimescaleDB
- - DolphinDB
  - Apache Druid
- - PrometheusDB
+ - GraphiteDB
+
+### Regular Databases
+ - MongoDB
+ - Firebase
+ - Postgres
+ - Cassandra
+ 
 ## Architectural Differences 
 ## CAP Analysis
 ## Conclusion
