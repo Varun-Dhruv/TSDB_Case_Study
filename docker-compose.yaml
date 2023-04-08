@@ -1,11 +1,11 @@
 version: '3.9'
 
 volumes:
-  influxdb_data:
+  influxdb_data: #no-sql 
     name: influxdb_data
-  timescaledb_data:
+  timescaledb_data: # sql 
     name: timescaledb_data
-  druiddb_data:
+  druiddb_data: # no-sql
     name: druid_data
   graphitedb_data:
     name: graphitedb_data
